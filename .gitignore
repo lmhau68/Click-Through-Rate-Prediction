@@ -1,0 +1,11 @@
+# Môi trường ảo và cache Python
+venv/
+__pycache__/
+*.pyc
+
+# Bỏ qua toàn bộ dữ liệu và mô hình cục bộ
+data/
+models/
+
+# Khóa bí mật
+.env
