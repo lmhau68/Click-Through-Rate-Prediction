@@ -4,8 +4,9 @@ __pycache__/
 *.pyc
 
 # Bỏ qua toàn bộ dữ liệu và mô hình cục bộ
-data/
+data/raw/
 models/
 
 # Khóa bí mật
 .env
+
