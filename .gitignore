@@ -4,7 +4,7 @@ __pycache__/
 *.pyc
 
 # Bỏ qua toàn bộ dữ liệu và mô hình cục bộ
-data/raw/
+data/
 models/
 
 # Khóa bí mật
