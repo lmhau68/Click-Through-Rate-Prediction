@@ -5,7 +5,7 @@ __pycache__/
 
 # Bỏ qua toàn bộ dữ liệu và mô hình cục bộ
 data/
-models/
+/models/
 
 # Khóa bí mật
 .env
