@@ -1,5 +1,6 @@
 # Môi trường ảo và cache Python
 venv/
+.venv/
 __pycache__/
 *.pyc
 
@@ -9,5 +10,4 @@ data/
 
 # Khóa bí mật
 .env
-
 

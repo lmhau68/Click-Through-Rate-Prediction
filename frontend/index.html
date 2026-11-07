@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dự đoán Click-Through-Rate (CTR)</title>
+    <style>
+        body { font-family: Arial, sans-serif; background-color: #f4f6f9; margin: 0; padding: 50px; display: flex; justify-content: center; }
+        .container { background: white; padding: 30px; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); width: 400px; }
+        h2 { text-align: center; color: #333; }
+        .form-group { margin-bottom: 15px; }
+        label { display: block; margin-bottom: 5px; font-weight: bold; color: #555; }
+        input, select { width: 100%; padding: 8px; box-sizing: border-box; border: 1px solid #ccc; border-radius: 4px; }
+        button { width: 100%; background-color: #007bff; color: white; border: none; padding: 10px; border-radius: 4px; font-size: 16px; cursor: pointer; }
+        button:hover { background-color: #0056b3; }
+        button:disabled { background-color: #6c757d; cursor: wait; }
+        .result { margin-top: 20px; padding: 15px; background: #e9ecef; border-radius: 4px; text-align: center; font-weight: bold; white-space: pre-line; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>Dự đoán Khách hàng Click Quảng cáo</h2>
+    <form id="predictForm">
+        <div class="form-group">
+            <label for="time_spent">Thời gian lướt web (phút):</label>
+            <input type="number" id="time_spent" step="any" required value="68.95">
+        </div>
+        <div class="form-group">
+            <label for="age">Tuổi:</label>
+            <input type="number" id="age" required value="35">
+        </div>
+        <div class="form-group">
+            <label for="income">Thu nhập khu vực ($):</label>
+            <input type="number" id="income" step="any" required value="61833.9">
+        </div>
+        <div class="form-group">
+            <label for="internet_usage">Lưu lượng mạng hàng ngày (MB):</label>
+            <input type="number" id="internet_usage" step="any" required value="256.09">
+        </div>
+        <div class="form-group">
+            <label for="gender">Giới tính:</label>
+            <select id="gender">
+                <option value="0">Nữ (Female)</option>
+                <option value="1">Nam (Male)</option>
+            </select>
+        </div>
+        <button type="submit">Dự đoán</button>
+    </form>
+    <div class="result" id="resultBox" role="status" aria-live="polite" style="display: none;"></div>
+</div>
+
+<script>
+const predictForm = document.getElementById('predictForm');
+predictForm.addEventListener('submit', (event) => {
+    event.preventDefault();
+    handlePredict();
+});
+
+async function handlePredict() {
+    const data = {
+        time_spent: parseFloat(document.getElementById('time_spent').value),
+        age: parseInt(document.getElementById('age').value),
+        income: parseFloat(document.getElementById('income').value),
+        internet_usage: parseFloat(document.getElementById('internet_usage').value),
+        gender: parseInt(document.getElementById('gender').value)
+    };
+
+    const box = document.getElementById('resultBox');
+    const button = predictForm.querySelector('button[type="submit"]');
+    button.disabled = true;
+    box.style.display = 'block';
+    box.style.color = '#333';
+    box.textContent = 'Đang xử lý dự đoán...';
+
+    try {
+        const response = await fetch('http://localhost:8000/api/predict', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+        });
+
+        const result = await response.json();
+        if (!response.ok) {
+            const detail = Array.isArray(result.detail)
+                ? result.detail.map((error) => error.msg).join(', ')
+                : result.detail;
+            throw new Error(typeof detail === 'string' ? detail : `API lỗi (${response.status}).`);
+        }
+
+        if (result.status === "success") {
+            const statusText = result.click_prediction === 1 ? "CÓ click quảng cáo" : "KHÔNG click quảng cáo";
+            box.style.color = result.click_prediction === 1 ? "#28a745" : "#dc3545";
+            box.textContent = `Khách hàng này ${statusText}\n(Xác suất: ${result.probability}%)`;
+        } else {
+            box.style.color = "red";
+            box.textContent = "Lỗi xử lý từ hệ thống!";
+        }
+    } catch (error) {
+        console.error(error);
+        box.style.color = "red";
+        box.textContent = error instanceof Error
+            ? `Không thể dự đoán: ${error.message}`
+            : "Không thể kết nối tới Server API! Hãy đảm bảo uvicorn đang chạy.";
+    } finally {
+        button.disabled = false;
+    }
+}
+</script>
+
+</body>
+</html>
