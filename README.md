@@ -169,7 +169,7 @@ curl -X 'POST' \
   "time_spent": 100,
   "age": 20,
   "income": 70000,
-  "internet_usage": 5000,
+  "internet_usage": 200,
   "gender": 0
 }'
 ```
@@ -183,7 +183,7 @@ Mô hình chạy thành công sẽ trả về dự đoán phân lớp và tỷ l
 {
   "status": "success",
   "click_prediction": 0,    // 0: Không click, 1: Có click quảng cáo
-  "probability": 23.45      // Tỷ lệ xác suất (tính theo %)
+  "probability": 20      // Tỷ lệ xác suất (tính theo %)
 }
 ```
 
