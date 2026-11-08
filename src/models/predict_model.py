@@ -17,7 +17,7 @@ FEATURE_COLUMNS = (
     "Daily Internet Usage",
     "Gender",
 )
-NUMERIC_COLUMNS = list(FEATURE_COLUMNS[:4])
+DEFAULT_SCALER_COLUMNS = FEATURE_COLUMNS[:4]
 
 
 @lru_cache(maxsize=1)
@@ -45,14 +45,15 @@ def predict_ctr(user_data: Mapping[str, float | int]) -> tuple[int, float]:
         columns=FEATURE_COLUMNS,
     )
     rf_model, scaler = _load_artifacts()
-    scaled_values = scaler.transform(df[NUMERIC_COLUMNS].astype(float))
-    for index, column in enumerate(NUMERIC_COLUMNS):
-        df[column] = scaled_values[:, index]
 
-    prediction = rf_model.predict(df)[0]
+    # Scale toàn bộ 5 cột dữ liệu khớp với lúc training đúng theo hướng dẫn
+    scaled_values = scaler.transform(df)
+
+    # Dự đoán trực tiếp trên tập scaled_values (NumPy array)
+    prediction = rf_model.predict(scaled_values)[0]
     classes = list(rf_model.classes_)
     if 1 not in classes:
         raise ValueError("The trained model does not contain the click class (1).")
-    probability = rf_model.predict_proba(df)[0][classes.index(1)]
+    probability = rf_model.predict_proba(scaled_values)[0][classes.index(1)]
 
     return int(prediction), float(probability)
