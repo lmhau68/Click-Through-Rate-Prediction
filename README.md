@@ -54,7 +54,7 @@ Sau quá trình khám phá dữ liệu (EDA) và thực nghiệm đánh giá đa
 *   📈 **F1-Score:** `0.78`
 *   **Ưu điểm:** Khả năng xử lý các tương tác đặc trưng phi tuyến tính phức tạp, kìm hãm hiệu quả hiện tượng quá khớp (Overfitting) thông qua cơ chế học tập kết hợp (Ensemble Learning), và duy trì tỷ lệ Lỗi loại I, Lỗi loại II ở mức thấp nhất trong số các mô hình được thử nghiệm.
 
-## ⚙️ Hướng Dẫn Cài Đặt & Khởi Chạy (Installation & Running)
+## ⚙️ Hướng Dẫn Cài Đặt & Khởi Chạy Demo Web (Installation & Running)
 
 Vì các tệp trọng số mô hình (Model Artifacts) không được lưu trữ trực tiếp trên mã nguồn GitHub, bạn cần thực hiện tuần tự các bước dưới đây để tải dữ liệu, tự huấn luyện lại lõi AI và khởi chạy hệ thống trên máy cá nhân (Localhost). Yêu cầu: Python 3.9+.
 
