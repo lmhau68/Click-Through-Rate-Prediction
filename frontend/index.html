@@ -6,11 +6,11 @@
     <title>Dự đoán Click-Through-Rate (CTR)</title>
     <style>
         body { font-family: Arial, sans-serif; background-color: #f4f6f9; margin: 0; padding: 50px; display: flex; justify-content: center; }
-        .container { background: white; padding: 30px; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); width: 400px; }
-        h2 { text-align: center; color: #333; }
+        .container { background: white; padding: 30px; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); width: 420px; }
+        h2 { text-align: center; color: #333; font-size: 22px; }
         .form-group { margin-bottom: 15px; }
-        label { display: block; margin-bottom: 5px; font-weight: bold; color: #555; }
-        input, select { width: 100%; padding: 8px; box-sizing: border-box; border: 1px solid #ccc; border-radius: 4px; }
+        label { display: block; margin-bottom: 5px; font-weight: bold; color: #555; font-size: 14px; }
+        input, select { width: 100%; padding: 8px; box-sizing: border-box; border: 1px solid #ccc; border-radius: 4px; font-size: 14px; }
         button { width: 100%; background-color: #007bff; color: white; border: none; padding: 10px; border-radius: 4px; font-size: 16px; cursor: pointer; }
         button:hover { background-color: #0056b3; }
         button:disabled { background-color: #6c757d; cursor: wait; }
@@ -23,20 +23,20 @@
     <h2>Dự đoán Khách hàng Click Quảng cáo</h2>
     <form id="predictForm">
         <div class="form-group">
-            <label for="time_spent">Thời gian lướt web (phút):</label>
-            <input type="number" id="time_spent" step="any" required value="68.95">
+            <label for="time_spent">Thời gian truy cập web mỗi ngày (phút/ngày):</label>
+            <input type="number" id="time_spent" step="any" min="0" max="1440" required value="65">
         </div>
         <div class="form-group">
             <label for="age">Tuổi:</label>
-            <input type="number" id="age" required value="35">
+            <input type="number" id="age" min="1" max="120" required value="35">
         </div>
         <div class="form-group">
-            <label for="income">Thu nhập khu vực ($):</label>
-            <input type="number" id="income" step="any" required value="61833.9">
+            <label for="income">Thu nhập bình quân khu vực ($/năm):</label>
+            <input type="number" id="income" step="any" min="0" required value="60000">
         </div>
         <div class="form-group">
-            <label for="internet_usage">Lưu lượng mạng hàng ngày (MB):</label>
-            <input type="number" id="internet_usage" step="any" required value="256.09">
+            <label for="internet_usage">Mức sử dụng Internet mỗi ngày (phút/ngày):</label>
+            <input type="number" id="internet_usage" step="any" min="0" max="1440" required value="120">
         </div>
         <div class="form-group">
             <label for="gender">Giới tính:</label>
@@ -58,16 +58,27 @@ predictForm.addEventListener('submit', (event) => {
 });
 
 async function handlePredict() {
+    const timeSpent = parseFloat(document.getElementById('time_spent').value);
+    const internetUsage = parseFloat(document.getElementById('internet_usage').value);
+    const box = document.getElementById('resultBox');
+    const button = predictForm.querySelector('button[type="submit"]');
+
+    // Ràng buộc tối đa 1440 phút (24 giờ)
+    if (timeSpent > 1440 || internetUsage > 1440) {
+        box.style.display = 'block';
+        box.style.color = 'red';
+        box.textContent = 'Lỗi: Thời gian truy cập web và mức sử dụng Internet mỗi ngày không được vượt quá 1440 phút (24 giờ)!';
+        return;
+    }
+
     const data = {
-        time_spent: parseFloat(document.getElementById('time_spent').value),
+        time_spent: timeSpent,
         age: parseInt(document.getElementById('age').value),
         income: parseFloat(document.getElementById('income').value),
-        internet_usage: parseFloat(document.getElementById('internet_usage').value),
+        internet_usage: internetUsage,
         gender: parseInt(document.getElementById('gender').value)
     };
 
-    const box = document.getElementById('resultBox');
-    const button = predictForm.querySelector('button[type="submit"]');
     button.disabled = true;
     box.style.display = 'block';
     box.style.color = '#333';
