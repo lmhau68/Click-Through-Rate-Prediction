@@ -102,9 +102,9 @@ async function handlePredict() {
         }
 
         if (result.status === "success") {
-            const statusText = result.click_prediction === 1 ? "CÓ click quảng cáo" : "KHÔNG click quảng cáo";
-            box.style.color = result.click_prediction === 1 ? "#28a745" : "#dc3545";
-            box.textContent = `Khách hàng này ${statusText}\n(Xác suất: ${result.probability}%)`;
+            const hasHighClickProbability = result.probability >= 50;
+            box.style.color = hasHighClickProbability ? "#28a745" : "#dc3545";
+            box.textContent = `Xác suất click: ${result.probability}%`;
         } else {
             box.style.color = "red";
             box.textContent = "Lỗi xử lý từ hệ thống!";
